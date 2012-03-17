@@ -5,7 +5,7 @@
     </div>
     <form class="form-horizontal">
         <p>
-            See what automata your regular expression makes! Also useful for debugging them.
+            See what automata your regular expression makes! Also useful for debugging.
             Single circles are normal states, double circles are accepting states. Arrows are
             transitions between states on a given input. Read more about how this works at my
             blog <a href="http://binarysculpting.com//2012/02/11/regular-expressions-how-do-they-really-work-automata-theory-for-programmers-part-1/">
@@ -16,8 +16,11 @@
             <div class="control-group">
                 <label class="control-label" for="regexinput">
                     Regular expression</label>
-                <div class="controls">
+                <div class="controls" dir="`">
                     @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge" })
+                    @Html.HiddenFor(m => Model.NfaSize, new { id = "nfachartsize" })
+                    @Html.HiddenFor(m => Model.DfaSize, new { id = "dfachartsize" })
+
                     <span id="errorhelp" class="help-inline"></span>
                     <p class="help-block">Want to share your graphs? Press enter and copy the URL of the page to get a direct link to your graph.</p>
                 </div>
@@ -30,19 +33,39 @@
         Nondeterministic automata</h3>
     <div align="center" id="nfachart">
     </div>
+    <div align="right">
+        <a href="#" onclick="resize('nfa', -50)"><i class="icon-minus-sign"></i></a>
+        <a href="#" onclick="resize('nfa', 50)"><i class="icon-plus-sign"></i></a>
+    </div>
 </div>
 <div class="span12 whitebox">
     <h3>
         Deterministic automata</h3>
     <div align="center" id="dfachart">
     </div>
+    <div align="right">
+        <a href="#" onclick="resize('dfa', -50)"><i class="icon-minus-sign"></i></a>
+        <a href="#" onclick="resize('dfa', 50)"><i class="icon-plus-sign"></i></a>
+    </div>
 </div>
 <script language="javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
+    function resize(target, offset) {
+        var t = $('#' + target + 'chartsize');
+        var newVal = offset + parseInt(t.val());
+        if (newVal < 50)
+            newVal = 50;
+        else if (newVal > 500)
+            newVal = 500;
+
+        t.val(newVal);
+        drawAll();
+    }
+
     function draw(target, dot, dataTable) {
         var vis = new google.visualization.ImageChart(document.getElementById(target));
         var options = {
-            chs: '700x250',
+            chs: '850x' + $('#'+target+'size').val(),
             cht: 'gv',
             chld: '',
             chl: dot

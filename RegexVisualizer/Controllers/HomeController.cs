@@ -11,9 +11,13 @@ namespace RegexVisualizer.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index(string Regex)
+        public ActionResult Index(HomeModel model)
         {
-            return View(new HomeModel { Regex = Regex });
+            if (model.Regex == null)
+            {
+                model = new HomeModel {Regex = "", DfaSize = 150, NfaSize = 150};
+            }
+            return View(model);
         }
 
         public JsonResult RegexToDot(string regex)
