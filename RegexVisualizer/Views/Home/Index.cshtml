@@ -17,8 +17,8 @@
                 Regular expression</label>
             <div class="controls">
                 @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge" })
-                <p class="help-block">
-                    Most but not all regular expressions are supported.</p>
+                <span id="errorhelp" class="help-inline"></span>
+                <p class="help-block">Want to share your graphs? Press enter and copy the URL of the page to get a direct link to your graph.</p>
             </div>
         </div>
     </fieldset>
@@ -49,39 +49,47 @@
         vis.draw(dataTable, options);
     }
 
+    function drawInitial() {
+        if ($('#regexinput').val() != '') {
+            drawAll();
+        }
+    }
+
+    function drawAll() {
+        var that = $('#regexinput');
+        var value = $('#regexinput').val();
+        
+        if (value.length >= 1) {
+            $.ajax({
+                type: "GET",
+                url: "/Home/RegexToDot/",
+                data: {
+                    'regex': value
+                },
+                dataType: "json",
+                success: function (msg) {
+                    if (value == $(that).val()) {
+                        // Value has changed, we can now push this to the
+                        // graphviz API
+                        if (msg.Error != '') {
+                            // Show an error instead that this isn't a valid regular expression
+                            $('#errorhelp').html(msg.Error);
+                        } else {
+                            $('#errorhelp').html('');
+                            draw('nfachart', msg.Nfa, new google.visualization.DataTable());
+                            draw('dfachart', msg.Dfa, new google.visualization.DataTable());
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    google.setOnLoadCallback(drawInitial);
     google.load("visualization", "1", { packages: ["imagechart"] });
 </script>
 <script type="text/javascript" language="javascript">
     $(function () {
-        var minlength = 1;
-
-        $("#regexinput").keyup(function () {
-            var that = this,
-            value = $(this).val();
-
-            if (value.length >= minlength) {
-                $.ajax({
-                    type: "GET",
-                    url: "/Home/RegexToDot/",
-                    data: {
-                        'regex': value
-                    },
-                    dataType: "json",
-                    success: function (msg) {
-                        if (value == $(that).val()) {
-                            // Value hasn't changed, we can now push this to the
-                            // graphviz API
-                            if (msg.Error == 'yes') {
-                                // Show an error instead that this isn't a valid regular expression
-
-                            } else {
-                                draw('nfachart', msg.Nfa, new google.visualization.DataTable());
-                                draw('dfachart', msg.Dfa, new google.visualization.DataTable());
-                            }
-                        }
-                    }
-                });
-            }
-        });
+        $("#regexinput").keyup(drawAll);
     });
 </script>

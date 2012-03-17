@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Piglet.Lexer.Construction;
 using Piglet.Lexer.Construction.DotNotation;
 using RegexVisualizer.Models;
 
@@ -10,25 +11,27 @@ namespace RegexVisualizer.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Default/
-        public ActionResult Index()
+        public ActionResult Index(string Regex)
         {
-            return View(new HomeModel { Regex = "" });
+            return View(new HomeModel { Regex = Regex });
         }
 
         public JsonResult RegexToDot(string regex)
         {
             string dfaString = null;
             string nfaString = null;
-            string error = null;
+            string error = "";
             try
             {
                 DotNotation.GetDfaAndNfaGraphs(regex, out dfaString, out nfaString);                
             }
+            catch (LexerConstructionException e)
+            {
+                error = e.Message;
+            }
             catch (Exception)
             {
-                error = "yes";
+                error = "Illegal expression";
             }
 
             return new JsonResult { 
