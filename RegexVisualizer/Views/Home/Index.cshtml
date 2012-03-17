@@ -1,47 +1,55 @@
 ﻿@model RegexVisualizer.Models.HomeModel
-<div class="container">
-    <div class="span12">
-        <form class="form-horizontal">
-            <h1>Regular expression visualizer</h1>
-            <p>See what automata your regular expression makes! Also useful for debugging them. Single circles are normal states, double circles are accepting states.
-            Arrows are transitions between states on a given input.
-            Read more about how this works at my blog <a href="http://binarysculpting.com//2012/02/11/regular-expressions-how-do-they-really-work-automata-theory-for-programmers-part-1/">binarysculpting.com</a>. The graph generation is powered by 
-            <a href="http://dervall.github.com/Piglet">Piglet</a>, the fluent parser generator.</p>
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="regexinput">Regular expression</label>
-                    <div class="controls">
-                        @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class="input-xlarge"})        
-                        <p class="help-block">Most but not all regular expressions are supported.</p>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-    <div class="span12">
-        <h3>Nondeterministic automata</h3>
-        <div align="center" id="nfachart"></div>
-    </div>
-    <div class="span12">
-        <h3>Deterministic automata</h3>
-        <div align="center" id="dfachart"></div>
+<div class="span12 whitebox">
+    <form class="form-horizontal">
+        <h1>Regular expression visualizer</h1>
+        <hr/>
+    <p>
+        See what automata your regular expression makes! Also useful for debugging them.
+        Single circles are normal states, double circles are accepting states. Arrows are
+        transitions between states on a given input. Read more about how this works at my
+        blog <a href="http://binarysculpting.com//2012/02/11/regular-expressions-how-do-they-really-work-automata-theory-for-programmers-part-1/">
+        binarysculpting.com</a>. The graph generation is powered by <a href="http://dervall.github.com/Piglet">Piglet</a>,
+        the fluent parser generator. Follow me on twitter <a href="http://twitter.com/Perdervall">@@Perdervall</a>.
+    </p>
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="regexinput">
+                Regular expression</label>
+            <div class="controls">
+                @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge" })
+                <p class="help-block">
+                    Most but not all regular expressions are supported.</p>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+</div>
+<div class="span12 whitebox">
+    <h3>
+        Nondeterministic automata</h3>
+    <div align="center" id="nfachart">
     </div>
 </div>
-
+<div class="span12 whitebox">
+    <h3>
+        Deterministic automata</h3>
+    <div align="center" id="dfachart">
+    </div>
+</div>
 <script language="javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
-     function draw(target, dot, dataTable) {
-         var vis = new google.visualization.ImageChart(document.getElementById(target));
-         var options = {
-             chs: '700x250',
-             cht: 'gv',
-             chld: '',
-             chl: dot
-         };
-         vis.draw(dataTable, options);
-     }
+    function draw(target, dot, dataTable) {
+        var vis = new google.visualization.ImageChart(document.getElementById(target));
+        var options = {
+            chs: '700x250',
+            cht: 'gv',
+            chld: '',
+            chl: dot
+        };
+        vis.draw(dataTable, options);
+    }
 
-     google.load("visualization", "1", { packages: ["imagechart"] });
+    google.load("visualization", "1", { packages: ["imagechart"] });
 </script>
 <script type="text/javascript" language="javascript">
     $(function () {
@@ -65,7 +73,7 @@
                             // graphviz API
                             if (msg.Error == 'yes') {
                                 // Show an error instead that this isn't a valid regular expression
-                                
+
                             } else {
                                 draw('nfachart', msg.Nfa, new google.visualization.DataTable());
                                 draw('dfachart', msg.Dfa, new google.visualization.DataTable());
