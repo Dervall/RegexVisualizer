@@ -15,19 +15,19 @@ namespace RegexVisualizer.Controllers
         {
             if (model.Regex == null)
             {
-                model = new HomeModel {Regex = "", DfaSize = 150, NfaSize = 150};
+                model = new HomeModel {Regex = "", DfaSize = 150, NfaSize = 150, Minimize = true };
             }
             return View(model);
         }
 
-        public JsonResult RegexToDot(string regex)
+        public JsonResult RegexToDot(string regex, bool minimize)
         {
             string dfaString = null;
             string nfaString = null;
             string error = "";
             try
             {
-                DotNotation.GetDfaAndNfaGraphs(regex, out dfaString, out nfaString);                
+                DotNotation.GetDfaAndNfaGraphs(regex, minimize, out dfaString, out nfaString);                
             }
             catch (LexerConstructionException e)
             {

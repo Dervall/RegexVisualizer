@@ -3,30 +3,52 @@
     <div class="page-header">
         <h1>Regular expression visualizer</h1>    
     </div>
-    <form class="form-horizontal">
+    <div class="alert alert-info fade in">
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
         <p>
-            See what automata your regular expression makes! Also useful for debugging.
-            Single circles are normal states, double circles are accepting states. Arrows are
-            transitions between states on a given input. Read more about how this works at my
-            blog <a href="http://binarysculpting.com//2012/02/11/regular-expressions-how-do-they-really-work-automata-theory-for-programmers-part-1/">
-                     binarysculpting.com</a>. The graph generation is powered by <a href="http://dervall.github.com/Piglet">Piglet</a>,
+            <strong>What's this?</strong><br />
+            This tool shows you the deterministic and nondeterministic automata that some regular expression engines would use to parse your 
+            expression. Besides the educational use, it's nifty for debugging your expressions - just follow the little arrows and see where 
+            they go wrong.
+        </p>
+        <p>
+            <strong>Legend</strong><br/>
+            <ul>
+                <li>Single circles are normal states.</li>
+                <li>Double circles are accepting states.</li>
+                <li>Arrows are transitions between states, labels represent the legal input.</li>
+            </ul>
+        </p>
+        <p>
+            <strong>Learn more</strong><br/>
+            Read more about how this works at my blog 
+            <a href="http://binarysculpting.com//2012/02/11/regular-expressions-how-do-they-really-work-automata-theory-for-programmers-part-1/">
+                binarysculpting.com</a>. 
+        
+            The graph generation is powered by <a href="http://dervall.github.com/Piglet">Piglet</a>,
             the fluent parser generator. Follow me on twitter <a href="http://twitter.com/Perdervall">@@Perdervall</a>.
         </p>
+        <p>
+            <strong>Share</strong><br/>
+            Want to share your graphs? Press enter in the regular expression box and copy the URL of the page to get a direct link to your graph.
+        </p>
+    </div>
+    <form class="well">
         <fieldset>
             <div class="control-group">
-                <label class="control-label" for="regexinput">
-                    Regular expression</label>
-                <div class="controls" dir="`">
-                    @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge" })
+                <div class="controls" dir="ltr">
+                    <label>Regular expression</label>
+                    @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge span8" })
+                    <span id="errorhelp" class="help-inline"></span>
                     @Html.HiddenFor(m => Model.NfaSize, new { id = "nfachartsize" })
                     @Html.HiddenFor(m => Model.DfaSize, new { id = "dfachartsize" })
-
-                    <span id="errorhelp" class="help-inline"></span>
-                    <p class="help-block">Want to share your graphs? Press enter and copy the URL of the page to get a direct link to your graph.</p>
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(m => Model.Minimize, new { id = "minimize" }) Minimize the deterministic automata
+                    </label>
                 </div>
             </div>
         </fieldset>
-    </form>
+    </form>    
 </div>
 <div class="span12 whitebox">
     <h3>
@@ -82,13 +104,15 @@
     function drawAll() {
         var that = $('#regexinput');
         var value = $('#regexinput').val();
-        
+        var mini = $('#minimize').is(':checked');
+
         if (value.length >= 1) {
             $.ajax({
                 type: "GET",
                 url: "/Home/RegexToDot/",
                 data: {
-                    'regex': value
+                    'regex': value,
+                    'minimize': mini                    
                 },
                 dataType: "json",
                 success: function (msg) {
@@ -115,5 +139,8 @@
 <script type="text/javascript" language="javascript">
     $(function () {
         $("#regexinput").keyup(drawAll);
+        $("#minimize").change(drawAll);
+//        $(".alert").alert();
+        
     });
 </script>
