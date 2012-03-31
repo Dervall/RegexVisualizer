@@ -36,7 +36,7 @@
     <form class="well">
         <fieldset>
             <div class="control-group">
-                <div class="controls" dir="ltr">
+                <div class="controls" dir="ltr">                    
                     <label>Regular expression</label>
                     @Html.TextBoxFor(m => Model.Regex, new { id = "regexinput", @class = "input-xlarge span8" })
                     <span id="errorhelp" class="help-inline"></span>
@@ -47,6 +47,10 @@
                     </label>
                 </div>
             </div>
+        </fieldset>
+        <fieldset>
+            <label>Test input</label>
+            @Html.TextBoxFor(m => Model.Regex, new { id = "testinput", @class = "input-xlarge span8" })            
         </fieldset>
     </form>    
 </div>
@@ -103,6 +107,7 @@
 
     function drawAll() {
         var that = $('#regexinput');
+        var testInput = $('#testinput').val();
         var value = $('#regexinput').val();
         var mini = $('#minimize').is(':checked');
 
@@ -112,7 +117,8 @@
                 url: "/Home/RegexToDot/",
                 data: {
                     'regex': value,
-                    'minimize': mini                    
+                    'minimize': mini,
+                    'testInput' : testInput
                 },
                 dataType: "json",
                 success: function (msg) {
@@ -139,6 +145,7 @@
 <script type="text/javascript" language="javascript">
     $(function () {
         $("#regexinput").keyup(drawAll);
+        $("#testinput").keyup(drawAll);
         $("#minimize").change(drawAll);
 //        $(".alert").alert();
         

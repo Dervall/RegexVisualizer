@@ -20,14 +20,14 @@ namespace RegexVisualizer.Controllers
             return View(model);
         }
 
-        public JsonResult RegexToDot(string regex, bool minimize)
+        public JsonResult RegexToDot(string regex, bool minimize, string testInput)
         {
             string dfaString = null;
             string nfaString = null;
             string error = "";
             try
             {
-                DotNotation.GetDfaAndNfaGraphs(regex, minimize, out dfaString, out nfaString);                
+                DotNotation.GetDfaAndNfaGraphs(regex, testInput, minimize, out dfaString, out nfaString);                
             }
             catch (LexerConstructionException e)
             {
